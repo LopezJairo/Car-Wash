@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantalla de Administrador</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #1f4037;  /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #99f2c8, #1f4037);  /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #99f2c8, #1f4037); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+            padding: 0;
+        }
+        
+        table{
+            background-color: white;
+            border-radius: 5px;
+        }
+
+
+        .admin-container {
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #006699;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .appointments-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .appointments-table th, .appointments-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin: 0 2px;
+            cursor: pointer;
+        }
+
+        .action-btn.view { background-color: #4CAF50; color: white; }
+        .action-btn.edit { background-color: #FFC107; color: white; }
+        .action-btn.delete { background-color: #F44336; color: white; }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+        }
+
+        .popup.active {
+            display: block;
+        }
+
+        .popup-header {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .popup-actions {
+            text-align: right;
+        }
+
+        .popup-actions button {
+            padding: 5px 10px;
+            margin: 0 2px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <header class="header">
+            <h1>Turnos Agendados</h1>
+        </header>
+        <main class="main">
+            <table class="appointments-table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Vehículo</th>
+                        <th>Servicio</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>19/11/2024</td>
+                        <td>10:00 AM</td>
+                        <td>Auto</td>
+                        <td>Lavado Completo</td>
+                        <td>$10,000</td>
+                        <td>
+                            <button class="action-btn view" onclick="showPopup('viewPopup')">Ver</button>
+                            <button class="action-btn edit" onclick="showPopup('editPopup')">Editar</button>
+                            <button class="action-btn delete" onclick="showPopup('deletePopup')">Eliminar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="summary">
+                <p>Total Turnos: <span>5</span></p>
+                <p>Recaudación Total: <span>$50,000</span></p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Overlays -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Popups -->
+    <div class="popup" id="viewPopup">
+        <div class="popup-header">Detalles del Turno</div>
+        <p>Fecha: 19/11/2024</p>
+        <p>Hora: 10:00 AM</p>
+        <p>Vehículo: Auto</p>
+        <p>Servicio: Lavado Completo</p>
+        <div class="popup-actions">
+            <button onclick="closePopup()">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="popup" id="editPopup">
+        <div class="popup-header">Editar Turno</div>
+        <form>
+            <label>Fecha:</label>
+            <input type="date" value="2024-11-19"><br><br>
+            <label>Hora:</label>
+            <input type="time" value="10:00"><br><br>
+            <label>Servicio:</label>
+            <input type="text" value="Lavado Completo"><br><br>
+            <div class="popup-actions">
+                <button type="submit">Guardar</button>
+                <button type="button" onclick="closePopup()">Cancelar</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="popup" id="deletePopup">
+        <div class="popup-header">Confirmar Eliminación</div>
+        <p>¿Estás seguro de que deseas eliminar este turno?</p>
+        <div class="popup-actions">
+            <button onclick="deleteAppointment()">Eliminar</button>
+            <button onclick="closePopup()">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(popupId) {
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById(popupId).classList.add('active');
+        }
+
+        function closePopup() {
+            document.querySelector('.popup.active').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        function deleteAppointment() {
+            alert('Turno eliminado con éxito');
+            closePopup();
+        }
+    </script>
+</body>
+</html>
